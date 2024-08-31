@@ -11,5 +11,5 @@ services:
     volumes:
       - /var/lib/plexmediaserver:/config
       - /tmp:/transcode
-      - /mnt/valut1:/mnt/vault1
-      - /mnt/valut2:/mnt/vault2
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault1:/mnt/vault2
