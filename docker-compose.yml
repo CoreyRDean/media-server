@@ -91,7 +91,7 @@ services:
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
       - OPENVPN_CONFIG=us-atl.prod.surfshark.com_udp  # or another server of your choice
-      - LOCAL_NETWORK=192.168.1.0/16
+      - LOCAL_NETWORK=192.168.0.0/16,172.16.0.0/12
       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
       - TZ=America/Chicago
