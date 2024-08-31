@@ -39,7 +39,8 @@ services:
     volumes:
       - /var/lib/jellyseerr/config:/app/config
     restart: unless-stopped
-
+    network_mode: host
+    
   radarr:
     container_name: radarr
     image: ghcr.io/hotio/radarr
@@ -55,3 +56,4 @@ services:
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
     restart: unless-stopped
+    network_mode: host
