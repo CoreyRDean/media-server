@@ -96,7 +96,7 @@ services:
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
       - TRANSMISSION_DOWNLOAD_DIR=/mnt/vault1/Unsorted
       - TRANSMISSION_INCOMPLETE_DIR=/mnt/vault1/Downloads
-      - TRANSMISSION_WATCH_DIR=/downloads/watch
+      - TRANSMISSION_WATCH_DIR=/watch
       - PUID=1000
       - PGID=1000
       - TZ=America/Chicago
@@ -104,4 +104,5 @@ services:
       - /var/lib/transmission-daemon/.config/transmission-daemon:/config
       - /mnt/vault1/Unsorted:/mnt/vault1/Unsorted
       - /mnt/vault1/Downloads:/mnt/vault1/Downloads
+      - /var/lib/transmission-daemon/downloads:/watch
     network_mode: bridge

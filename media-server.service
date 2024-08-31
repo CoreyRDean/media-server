@@ -1,0 +1,15 @@
+[Unit]
+Description=Media Server
+Requires=docker.service
+After=docker.service network-online.target mnt-vault1.mount mnt-vault2.mount
+Wants=mnt-vault1.mount mnt-vault2.mount
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStartPre=/bin/sleep 10
+ExecStart=/usr/bin/docker-compose -f /media-server/docker-compose.yml up -d
+ExecStop=/usr/bin/docker-compose -f /media-server/docker-compose.yml down
+
+[Install]
+WantedBy=multi-user.target
