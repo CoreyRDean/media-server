@@ -40,7 +40,7 @@ services:
       - /var/lib/jellyseerr/config:/app/config
     restart: unless-stopped
     network_mode: host
-    
+
   radarr:
     container_name: radarr
     image: ghcr.io/hotio/radarr
@@ -55,5 +55,20 @@ services:
       - /var/lib/radarr/config:/config
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
+    restart: unless-stopped
+    network_mode: host
+
+  prowlarr:
+    container_name: prowlarr
+    image: ghcr.io/hotio/prowlarr
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/prowlarr/config:/config
     restart: unless-stopped
     network_mode: host
