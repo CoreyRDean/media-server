@@ -26,3 +26,16 @@ services:
       - /var/lib/jellyfin/cache:/cache
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=America/Chicago
+      - PORT=5055 #optional
+    ports:
+      - 5055:5055
+    volumes:
+      - /var/lib/jellyseerr/config:/app/config
+    restart: unless-stopped
