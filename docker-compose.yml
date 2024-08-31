@@ -39,3 +39,19 @@ services:
     volumes:
       - /var/lib/jellyseerr/config:/app/config
     restart: unless-stopped
+
+  radarr:
+    container_name: radarr
+    image: ghcr.io/hotio/radarr
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/radarr/config:/config
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
+    restart: unless-stopped
