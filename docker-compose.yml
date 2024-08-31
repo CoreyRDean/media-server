@@ -3,7 +3,7 @@ services:
   plex:
     image: plexinc/pms-docker
     cpu_shares: 3000
-    mem_limit: 30%
+    mem_limit: 2400m
     container_name: plex
     restart: unless-stopped
     environment:
@@ -19,7 +19,7 @@ services:
   jellyfin:
     image: jellyfin/jellyfin
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     container_name: jellyfin
     restart: unless-stopped
     environment:
@@ -34,7 +34,7 @@ services:
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -51,7 +51,7 @@ services:
     container_name: radarr
     image: ghcr.io/hotio/radarr
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     ports:
       - "7878:7878"
     environment:
@@ -70,7 +70,7 @@ services:
     container_name: prowlarr
     image: ghcr.io/hotio/prowlarr
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     ports:
       - "9696:9696"
     environment:
@@ -86,7 +86,7 @@ services:
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     container_name: transmission-vpn
     env_file: .env
     cap_add:
@@ -123,7 +123,7 @@ services:
     container_name: sonarr
     image: ghcr.io/hotio/sonarr
     cpu_shares: 700
-    mem_limit: 7%
+    mem_limit: 560m
     ports:
       - "8989:8989"
     environment:
