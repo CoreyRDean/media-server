@@ -95,7 +95,7 @@ services:
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
       - TZ=America/Chicago
     volumes:
-      - /var/lib/transmission/config:/config
+      - /var/lib/transmission-daemon/info:/config
       - /mnt/vault1/Unsorted:/completed
       - /mnt/vault1/Downloads:/downloads
     network_mode: bridge
