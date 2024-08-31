@@ -94,9 +94,14 @@ services:
       - LOCAL_NETWORK=192.168.0.0/16,172.16.0.0/12
       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
+      - TRANSMISSION_DOWNLOAD_DIR=/mnt/vault1/Unsorted
+      - TRANSMISSION_INCOMPLETE_DIR=/mnt/vault1/Downloads
+      - TRANSMISSION_WATCH_DIR=/downloads/watch
+      - PUID=1000
+      - PGID=1000
       - TZ=America/Chicago
     volumes:
-      - /var/lib/transmission-daemon/info:/config
-      - /mnt/vault1/Unsorted:/completed
-      - /mnt/vault1/Downloads:/downloads
+      - /var/lib/transmission-daemon/.config/transmission-daemon:/config
+      - /mnt/vault1/Unsorted:/mnt/vault1/Unsorted
+      - /mnt/vault1/Downloads:/mnt/vault1/Downloads
     network_mode: bridge
