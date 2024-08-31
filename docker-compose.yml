@@ -12,4 +12,4 @@ services:
       - /var/lib/plexmediaserver:/config
       - /tmp:/transcode
       - /mnt/vault1:/mnt/vault1
-      - /mnt/vault1:/mnt/vault2
+      - /mnt/vault2:/mnt/vault2
