@@ -103,23 +103,23 @@ services:
       - OPENVPN_PROVIDER=${OPENVPN_PROVIDER}
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
       - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
-      - OPENVPN_CONFIG=us-atl.prod.surfshark.com_udp  # or another server of your choice
+      - OPENVPN_CONFIG=us-atl.prod.surfshark.com_udp
       - LOCAL_NETWORK=192.168.0.0/16,172.16.0.0/12
       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-      - TRANSMISSION_DOWNLOAD_DIR=/downloaded
-      - TRANSMISSION_INCOMPLETE_DIR=/incomplete
+      - TRANSMISSION_DOWNLOAD_DIR=/downloads
+      - TRANSMISSION_INCOMPLETE_DIR=/downloads/incomplete
       - TRANSMISSION_WATCH_DIR=/watch
       - PUID=1000
       - PGID=1000
       - TZ=America/Chicago
     volumes:
       - /var/lib/transmission-daemon/.config/transmission-daemon:/config
-      - /mnt/vault2/Downloaded:/downloaded
-      - /mnt/vault2/Movies:/downloaded/movies
-      - /mnt/vault2/Shows:/downloaded/tv
-      - /mnt/vault2/Incomplete:/incomplete
+      - /mnt/vault2/Downloaded:/downloads
+      - /mnt/vault2/Incomplete:/downloads/incomplete
       - /var/lib/transmission-daemon/downloads:/watch
+      - /mnt/vault2/Movies:/downloads/movies
+      - /mnt/vault2/Shows:/downloads/tv
     network_mode: bridge
 
   sonarr:
