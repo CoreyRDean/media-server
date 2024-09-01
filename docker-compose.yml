@@ -2,8 +2,8 @@ version: '2.4'
 services:
   plex:
     image: plexinc/pms-docker
-    cpu_shares: 3000
-    mem_limit: 2400m
+    cpu_shares: 3072
+    mem_limit: 2048m
     container_name: plex
     restart: unless-stopped
     environment:
@@ -18,8 +18,8 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin
-    cpu_shares: 700
-    mem_limit: 560m
+    cpu_shares: 1024
+    mem_limit: 1024m
     container_name: jellyfin
     restart: unless-stopped
     environment:
@@ -33,8 +33,8 @@ services:
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
-    cpu_shares: 700
-    mem_limit: 560m
+    cpu_shares: 1024
+    mem_limit: 1024m
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -47,46 +47,10 @@ services:
     restart: unless-stopped
     network_mode: host
 
-  radarr:
-    container_name: radarr
-    image: ghcr.io/hotio/radarr
-    cpu_shares: 700
-    mem_limit: 560m
-    ports:
-      - "7878:7878"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
-    volumes:
-      - /var/lib/radarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
-    restart: unless-stopped
-    network_mode: host
-
-  prowlarr:
-    container_name: prowlarr
-    image: ghcr.io/hotio/prowlarr
-    cpu_shares: 700
-    mem_limit: 560m
-    ports:
-      - "9696:9696"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
-    volumes:
-      - /var/lib/prowlarr/config:/config
-    restart: unless-stopped
-    network_mode: host
-
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
-    cpu_shares: 700
-    mem_limit: 560m
+    cpu_shares: 1024
+    mem_limit: 1024m
     container_name: transmission-vpn
     env_file: .env
     cap_add:
@@ -119,11 +83,47 @@ services:
       - /var/lib/transmission-daemon/downloads:/watch
     network_mode: bridge
 
+  radarr:
+    container_name: radarr
+    image: ghcr.io/hotio/radarr
+    cpu_shares: 512
+    mem_limit: 512m
+    ports:
+      - "7878:7878"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/radarr/config:/config
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
+    restart: unless-stopped
+    network_mode: host
+
+  prowlarr:
+    container_name: prowlarr
+    image: ghcr.io/hotio/prowlarr
+    cpu_shares: 512
+    mem_limit: 512m
+    ports:
+      - "9696:9696"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/prowlarr/config:/config
+    restart: unless-stopped
+    network_mode: host
+
   sonarr:
     container_name: sonarr
     image: ghcr.io/hotio/sonarr
-    cpu_shares: 700
-    mem_limit: 560m
+    cpu_shares: 512
+    mem_limit: 512m
     ports:
       - "8989:8989"
     environment:
@@ -133,6 +133,25 @@ services:
       - TZ=America/Chicago
     volumes:
       - /var/lib/sonarr/config:/config
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
+    restart: unless-stopped
+    network_mode: host
+
+  bazarr:
+    container_name: bazarr
+    image: ghcr.io/linuxserver/bazarr
+    cpu_shares: 512
+    mem_limit: 512m
+    ports:
+      - 6767:6767
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/bazarr/config:/config
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
     restart: unless-stopped

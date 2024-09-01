@@ -11,6 +11,8 @@ The following folders are used to store the configuration for the various servic
 - `/var/lib/jellyseerr/config`: Jellyseerr configuration
 - `/var/lib/radarr/config`: Radarr configuration
 - `/var/lib/prowlarr/config`: Prowlarr configuration
+- `/var/lib/sonarr/config`: Sonarr configuration
+- `/var/lib/bazarr/config`: Bazarr configuration
 
 You may need to create these folders and ensure the correct permissions are set.
 
@@ -29,6 +31,7 @@ The following environment variables are used to configure the various services:
 - `TRANSMISSION_WATCH_DIR`: The directory for watch downloads
 - `PUID`: The user ID for the user running the containers
 - `PGID`: The group ID for the group running the containers
+- `UMASK`: The umask for the user running the containers
 - `TZ`: The timezone for the containers
 
 ## Starting the Services on Boot
