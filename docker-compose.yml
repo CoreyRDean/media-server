@@ -63,7 +63,6 @@ services:
       - /var/lib/radarr/config:/config
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
-      - /mnt/vault2/Movies:/downloaded/movies
     restart: unless-stopped
     network_mode: host
 
@@ -107,19 +106,17 @@ services:
       - LOCAL_NETWORK=192.168.0.0/16,172.16.0.0/12
       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-      - TRANSMISSION_DOWNLOAD_DIR=/downloads
-      - TRANSMISSION_INCOMPLETE_DIR=/downloads/incomplete
+      - TRANSMISSION_DOWNLOAD_DIR=/mnt/vault2/Downloaded
+      - TRANSMISSION_INCOMPLETE_DIR=/incomplete
       - TRANSMISSION_WATCH_DIR=/watch
       - PUID=1000
       - PGID=1000
       - TZ=America/Chicago
     volumes:
       - /var/lib/transmission-daemon/.config/transmission-daemon:/config
-      - /mnt/vault2/Downloaded:/downloads
-      - /mnt/vault2/Incomplete:/downloads/incomplete
+      - /mnt/vault2/Downloaded:/mnt/vault2/Downloaded
+      - /mnt/vault2/Incomplete:/incomplete
       - /var/lib/transmission-daemon/downloads:/watch
-      - /mnt/vault2/Movies:/downloads/movies
-      - /mnt/vault2/Shows:/downloads/tv
     network_mode: bridge
 
   sonarr:
@@ -138,6 +135,5 @@ services:
       - /var/lib/sonarr/config:/config
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
-      - /mnt/vault2/Shows:/downloaded/tv
     restart: unless-stopped
     network_mode: host
