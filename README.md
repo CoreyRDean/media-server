@@ -38,6 +38,19 @@ The following environment variables are used to configure the various services:
 
 To start the services on boot, first modify the `media-server.service` file to set the correct paths to your repo folder. Then copy the file to `/etc/systemd/system/` and run `sudo systemctl enable media-server.service`.
 
+### Docker
+
+You will need to install `docker` and `docker-compose` on your system.
+
+To have docker start on boot, you should add your user to the `docker` group and enable the docker
+service.
+
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+sudo systemctl enable docker
+```
+
 ## Misc
 
 ### Volume Mounts
