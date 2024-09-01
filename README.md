@@ -20,6 +20,7 @@ You may need to create these folders and ensure the correct permissions are set.
 
 The following environment variables are used to configure the various services:
 
+- `PLEX_CLAIM`: The claim for the Plex server
 - `OPENVPN_PROVIDER`: The name of the VPN provider
 - `OPENVPN_USERNAME`: The username for the VPN
 - `OPENVPN_PASSWORD`: The password for the VPN
