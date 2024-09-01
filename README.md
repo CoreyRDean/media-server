@@ -36,14 +36,14 @@ The following environment variables are used to configure the various services:
 To start the services on boot, first modify the `media-server.service` file to set the correct paths to your repo folder. Then copy the file to `/etc/systemd/system/` and run `sudo systemctl enable media-server.service`.
 
 ## Misc
+
 ### Volume Mounts
 
 In this setup it is assumed that you have 2 volumes mounted on your host machine. To have these mount automatically on startup, you can add the following to your `/etc/fstab` file:
 
-```
+```txt
 UUID=b1b817e3-0a07-36fd-9388-5956ab2fb34f /mnt/vault2 hfsplus force,rw 0 1
 UUID=2151fd36-4286-30e1-be8f-cf128abe7f4d /mnt/vault1 hfsplus force,rw 0 1
 ```
 
 Just replace the UUIDs with your own. You can find the UUIDs of your volumes by running `lsblk`.
-
