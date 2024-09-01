@@ -63,3 +63,34 @@ UUID=2151fd36-4286-30e1-be8f-cf128abe7f4d /mnt/vault1 hfsplus force,rw 0 1
 ```
 
 Just replace the UUIDs with your own. You can find the UUIDs of your volumes by running `lsblk`.
+
+## Config Backup
+
+To backup the config files, you can run the following command:
+
+```bash
+sudo rsync -av /var/lib/transmission-daemon/.config/transmission-daemon /mnt/vault1/Config/transmission-daemon
+sudo rsync -av /var/lib/plexmediaserver /mnt/vault1/Config/plexmediaserver
+sudo rsync -av /var/lib/jellyfin/config /mnt/vault1/Config/jellyfin
+sudo rsync -av /var/lib/jellyfin/cache /mnt/vault1/Config/jellyfin
+sudo rsync -av /var/lib/jellyseerr/config /mnt/vault1/Config/jellyseerr
+sudo rsync -av /var/lib/radarr/config /mnt/vault1/Config/radarr
+sudo rsync -av /var/lib/prowlarr/config /mnt/vault1/Config/prowlarr
+sudo rsync -av /var/lib/sonarr/config /mnt/vault1/Config/sonarr
+sudo rsync -av /var/lib/bazarr/config /mnt/vault1/Config/bazarr
+```
+
+### Config Restore
+
+To restore the config files, you can run the following command:
+
+```bash
+sudo rsync -av /mnt/vault1/Config/transmission-daemon /var/lib/transmission-daemon/.config/transmission-daemon
+sudo rsync -av /mnt/vault1/Config/plexmediaserver /var/lib/plexmediaserver
+sudo rsync -av /mnt/vault1/Config/jellyfin /var/lib/jellyfin
+sudo rsync -av /mnt/vault1/Config/jellyseerr /var/lib/jellyseerr
+sudo rsync -av /mnt/vault1/Config/radarr /var/lib/radarr
+sudo rsync -av /mnt/vault1/Config/prowlarr /var/lib/prowlarr
+sudo rsync -av /mnt/vault1/Config/sonarr /var/lib/sonarr
+sudo rsync -av /mnt/vault1/Config/bazarr /var/lib/bazarr
+```
