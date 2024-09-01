@@ -75,6 +75,7 @@ services:
       - TRANSMISSION_WATCH_DIR=/watch
       - PUID=1000
       - PGID=1000
+      - UMASK=002
       - TZ=America/Chicago
     volumes:
       - /var/lib/transmission-daemon/.config/transmission-daemon:/config
