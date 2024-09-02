@@ -1,0 +1,14 @@
+http:
+  routers:
+    plex-router:
+      rule: "Host(`plex.${DOMAIN}`)"
+      service: plex-service
+      entryPoints:
+        - web
+        - websecure
+
+  services:
+    plex-service:
+      loadBalancer:
+        servers:
+          - url: "https://app.plex.tv"
