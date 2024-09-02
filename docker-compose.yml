@@ -1,9 +1,29 @@
 version: '2.4'
 services:
+  traefik:
+    image: traefik:v2.10
+    cpu_shares: 256
+    mem_limit: 256m
+    container_name: traefik
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    network_mode: bridge
+
   plex:
     image: plexinc/pms-docker
     cpu_shares: 3072
-    mem_limit: 2048m
+    mem_limit: 3072m
     container_name: plex
     restart: unless-stopped
     environment:
@@ -24,28 +44,38 @@ services:
     restart: unless-stopped
     environment:
       - TZ=America/Chicago
-    network_mode: host
+    ports:
+      - 8096:8096
+    network_mode: bridge
     volumes:
       - /var/lib/jellyfin/config:/config
       - /var/lib/jellyfin/cache:/cache
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyfin.rule=Host(`watch.${DOMAIN}`)"
+      - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
-    cpu_shares: 1024
-    mem_limit: 1024m
+    cpu_shares: 768
+    mem_limit: 768m
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
       - TZ=America/Chicago
-      - PORT=5055 #optional
+      - PORT=5055
     ports:
       - 5055:5055
     volumes:
       - /var/lib/jellyseerr/config:/app/config
     restart: unless-stopped
-    network_mode: host
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseerr.rule=Host(`find.${DOMAIN}`)"
+      - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
 
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
@@ -87,8 +117,8 @@ services:
   radarr:
     container_name: radarr
     image: ghcr.io/hotio/radarr
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 256
+    mem_limit: 256m
     ports:
       - "7878:7878"
     environment:
@@ -101,13 +131,17 @@ services:
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
     restart: unless-stopped
-    network_mode: host
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
 
   prowlarr:
     container_name: prowlarr
     image: ghcr.io/hotio/prowlarr
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 256
+    mem_limit: 256m
     ports:
       - "9696:9696"
     environment:
@@ -123,8 +157,8 @@ services:
   sonarr:
     container_name: sonarr
     image: ghcr.io/hotio/sonarr
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 256
+    mem_limit: 256m
     ports:
       - "8989:8989"
     environment:
@@ -137,13 +171,17 @@ services:
       - /mnt/vault1:/mnt/vault1
       - /mnt/vault2:/mnt/vault2
     restart: unless-stopped
-    network_mode: host
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.sonarr.rule=Host(`shows.${DOMAIN}`)"
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
 
   bazarr:
     container_name: bazarr
     image: ghcr.io/linuxserver/bazarr
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 256
+    mem_limit: 256m
     ports:
       - 6767:6767
     environment:

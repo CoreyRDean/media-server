@@ -34,6 +34,7 @@ The following environment variables are used to configure the various services:
 - `PGID`: The group ID for the group running the containers
 - `UMASK`: The umask for the user running the containers
 - `TZ`: The timezone for the containers
+- `DOMAIN`: The domain name for the server
 
 ## Starting the Services on Boot
 
@@ -66,6 +67,8 @@ UUID=2151fd36-4286-30e1-be8f-cf128abe7f4d /mnt/vault1 hfsplus force,rw 0 1
 Just replace the UUIDs with your own. You can find the UUIDs of your volumes by running `lsblk`.
 
 ## Config Backup
+
+(Note: There is a bash alias available for this by running `git clone https://gist.github.com/a10b4659279eb5eb72c5eeb71a111fbb.git ~/a10b4659279eb5eb72c5eeb71a111fbb && cp ~/a10b4659279eb5eb72c5eeb71a111fbb/.bash_aliases ~/.bash_aliases && source ~/.bash_aliases)
 
 To backup the config files, you can run the following command:
 
