@@ -25,8 +25,8 @@ services:
 
   plex:
     image: plexinc/pms-docker
-    cpu_shares: 3072
-    mem_limit: 3072m
+    cpu_shares: 2560
+    mem_limit: 2560m
     container_name: plex
     restart: unless-stopped
     environment:
@@ -198,3 +198,22 @@ services:
       - /mnt/vault2:/mnt/vault2
     restart: unless-stopped
     network_mode: host
+
+  ersatztv:
+    image: jasongdove/ersatztv:latest
+    container_name: ersatztv
+    cpu_shares: 512
+    mem_limit: 512m
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    ports:
+      - 8409:8409
+    volumes:
+      - /var/lib/ersatztv/config:/root/.local/share/ersatztv
+      - /mnt/vault1:/mnt/vault1:ro
+      - /mnt/vault2:/mnt/vault2:ro
+    network_mode: bridge
