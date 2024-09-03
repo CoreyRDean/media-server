@@ -41,8 +41,8 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin
-    cpu_shares: 1024
-    mem_limit: 1024m
+    cpu_shares: 512
+    mem_limit: 512m
     container_name: jellyfin
     restart: unless-stopped
     environment:
@@ -202,8 +202,8 @@ services:
   ersatztv:
     image: jasongdove/ersatztv:latest
     container_name: ersatztv
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 1024
+    mem_limit: 1024m
     restart: unless-stopped
     environment:
       - TZ=America/Chicago

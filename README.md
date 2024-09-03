@@ -13,6 +13,7 @@ The following folders are used to store the configuration for the various servic
 - `/var/lib/prowlarr/config`: Prowlarr configuration
 - `/var/lib/sonarr/config`: Sonarr configuration
 - `/var/lib/bazarr/config`: Bazarr configuration
+- `/var/lib/ersatztv/config`: ersatztv configuration
 
 You may need to create these folders and ensure the correct permissions are set.
 
@@ -82,6 +83,7 @@ sudo rsync -av /var/lib/radarr/config /mnt/vault1/Config/radarr
 sudo rsync -av /var/lib/prowlarr/config /mnt/vault1/Config/prowlarr
 sudo rsync -av /var/lib/sonarr/config /mnt/vault1/Config/sonarr
 sudo rsync -av /var/lib/bazarr/config /mnt/vault1/Config/bazarr
+sudo rsync -av /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
 ```
 
 ### Config Restore
@@ -97,4 +99,5 @@ sudo rsync -av /mnt/vault1/Config/radarr /var/lib/radarr
 sudo rsync -av /mnt/vault1/Config/prowlarr /var/lib/prowlarr
 sudo rsync -av /mnt/vault1/Config/sonarr /var/lib/sonarr
 sudo rsync -av /mnt/vault1/Config/bazarr /var/lib/bazarr
+sudo rsync -av /mnt/vault1/Config/ersatztv /var/lib/ersatztv
 ```
