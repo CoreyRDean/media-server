@@ -67,7 +67,7 @@ UUID=2151fd36-4286-30e1-be8f-cf128abe7f4d /mnt/vault1 hfsplus force,rw 0 1
 
 Just replace the UUIDs with your own. You can find the UUIDs of your volumes by running `lsblk`.
 
-## Config Backup
+### Config Backup
 
 (Note: There is a bash alias available for this by running `git clone https://gist.github.com/a10b4659279eb5eb72c5eeb71a111fbb.git ~/a10b4659279eb5eb72c5eeb71a111fbb && cp ~/a10b4659279eb5eb72c5eeb71a111fbb/.bash_aliases ~/.bash_aliases && source ~/.bash_aliases)
 
@@ -86,7 +86,7 @@ sudo rsync -av /var/lib/bazarr/config /mnt/vault1/Config/bazarr
 sudo rsync -av /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
 ```
 
-### Config Restore
+#### Config Restore
 
 To restore the config files, you can run the following command:
 
@@ -100,4 +100,26 @@ sudo rsync -av /mnt/vault1/Config/prowlarr /var/lib/prowlarr
 sudo rsync -av /mnt/vault1/Config/sonarr /var/lib/sonarr
 sudo rsync -av /mnt/vault1/Config/bazarr /var/lib/bazarr
 sudo rsync -av /mnt/vault1/Config/ersatztv /var/lib/ersatztv
+```
+
+### Cleanup Old Downloads
+
+To cleanup old downloads, you can run the following command:
+
+```bash
+./cleanup_old_downloads.sh
+```
+
+This will delete files older than 3 days in the `/mnt/vault2/Downloaded/Movies` and `/mnt/vault2/Downloaded/Shows` directories.
+
+You may have to add the execute permission to the script by running `chmod +x cleanup_old_downloads.sh`.
+
+You can also add this to your crontab to run at a specific time.
+
+```bash
+crontab -e
+```
+
+```bash
+0 3 * * * /path/to/cleanup_old_downloads.sh
 ```
