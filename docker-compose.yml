@@ -41,8 +41,8 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin
-    cpu_shares: 512
-    mem_limit: 512m
+    cpu_shares: 256
+    mem_limit: 256m
     container_name: jellyfin
     restart: unless-stopped
     environment:
@@ -62,8 +62,8 @@ services:
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
-    cpu_shares: 768
-    mem_limit: 768m
+    cpu_shares: 512
+    mem_limit: 512m
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
@@ -202,8 +202,8 @@ services:
   ersatztv:
     image: jasongdove/ersatztv:latest
     container_name: ersatztv
-    cpu_shares: 1024
-    mem_limit: 1024m
+    cpu_shares: 2048
+    mem_limit: 2048m
     restart: unless-stopped
     environment:
       - TZ=America/Chicago
