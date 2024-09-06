@@ -74,16 +74,16 @@ Just replace the UUIDs with your own. You can find the UUIDs of your volumes by 
 To backup the config files, you can run the following command:
 
 ```bash
-sudo rsync -av /var/lib/transmission-daemon/.config/transmission-daemon /mnt/vault1/Config/transmission-daemon
-sudo rsync -av /var/lib/plexmediaserver /mnt/vault1/Config/plexmediaserver
-sudo rsync -av /var/lib/jellyfin/config /mnt/vault1/Config/jellyfin
-sudo rsync -av /var/lib/jellyfin/cache /mnt/vault1/Config/jellyfin
-sudo rsync -av /var/lib/jellyseerr/config /mnt/vault1/Config/jellyseerr
-sudo rsync -av /var/lib/radarr/config /mnt/vault1/Config/radarr
-sudo rsync -av /var/lib/prowlarr/config /mnt/vault1/Config/prowlarr
-sudo rsync -av /var/lib/sonarr/config /mnt/vault1/Config/sonarr
-sudo rsync -av /var/lib/bazarr/config /mnt/vault1/Config/bazarr
-sudo rsync -av /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
+sudo rsync -av --delete /var/lib/transmission-daemon/.config/transmission-daemon /mnt/vault1/Config/transmission-daemon
+sudo rsync -av --delete /var/lib/plexmediaserver /mnt/vault1/Config/plexmediaserver
+sudo rsync -av --delete /var/lib/jellyfin/config /mnt/vault1/Config/jellyfin
+sudo rsync -av --delete /var/lib/jellyfin/cache /mnt/vault1/Config/jellyfin
+sudo rsync -av --delete /var/lib/jellyseerr/config /mnt/vault1/Config/jellyseerr
+sudo rsync -av --delete /var/lib/radarr/config /mnt/vault1/Config/radarr
+sudo rsync -av --delete /var/lib/prowlarr/config /mnt/vault1/Config/prowlarr
+sudo rsync -av --delete /var/lib/sonarr/config /mnt/vault1/Config/sonarr
+sudo rsync -av --delete /var/lib/bazarr/config /mnt/vault1/Config/bazarr
+sudo rsync -av --delete /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
 ```
 
 #### Config Restore

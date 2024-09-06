@@ -6,9 +6,18 @@ http:
       entryPoints:
         - web
         - websecure
+      middlewares:
+        - plex-redirect
 
   services:
     plex-service:
       loadBalancer:
         servers:
           - url: "https://app.plex.tv"
+
+  middlewares:
+    plex-redirect:
+      redirectRegex:
+        regex: "^https://plex\\.(.*)/(.*)$"
+        replacement: "https://app.plex.tv/${2}"
+        permanent: true
