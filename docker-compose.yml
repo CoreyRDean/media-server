@@ -217,3 +217,7 @@ services:
       - /mnt/vault1:/mnt/vault1:ro
       - /mnt/vault2:/mnt/vault2:ro
     network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.ersatztv.rule=Host(`live.${DOMAIN}`)"
+      - "traefik.http.services.ersatztv.loadbalancer.server.port=8409"
