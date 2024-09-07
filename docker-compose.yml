@@ -2,8 +2,11 @@ version: '2.4'
 services:
   traefik:
     image: traefik:v2.10
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 512M
     container_name: traefik
     command:
       - "--api.insecure=true"
@@ -13,6 +16,7 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--providers.file.directory=/etc/traefik/dynamic_conf"
       - "--providers.file.watch=true"
+      - "--log.level=DEBUG"
     ports:
       - "80:80"
       - "443:443"
@@ -22,16 +26,24 @@ services:
       - ./traefik_dynamic_conf:/etc/traefik/dynamic_conf
     restart: unless-stopped
     network_mode: bridge
+    group_add:
+      - "1001"
 
   plex:
     image: plexinc/pms-docker
-    cpu_shares: 2560
-    mem_limit: 2560m
+    deploy:
+      resources:
+        limits:
+          cpus: 4
+          memory: 8G
     container_name: plex
     restart: unless-stopped
     environment:
       - TZ=America/Chicago
       - PLEX_CLAIM=${PLEX_CLAIM}
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
     network_mode: host
     volumes:
       - /var/lib/plexmediaserver:/config
@@ -41,12 +53,18 @@ services:
 
   jellyfin:
     image: jellyfin/jellyfin
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4G
     container_name: jellyfin
     restart: unless-stopped
     environment:
       - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
     ports:
       - 8096:8096
     network_mode: bridge
@@ -62,13 +80,19 @@ services:
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
-    cpu_shares: 512
-    mem_limit: 512m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
       - TZ=America/Chicago
       - PORT=5055
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
     ports:
       - 5055:5055
     volumes:
@@ -82,8 +106,11 @@ services:
 
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
-    cpu_shares: 1024
-    mem_limit: 1024m
+    deploy:
+      resources:
+        limits:
+          cpus: 1
+          memory: 2G
     container_name: transmission-vpn
     env_file: .env
     cap_add:
@@ -120,8 +147,11 @@ services:
   radarr:
     container_name: radarr
     image: ghcr.io/hotio/radarr
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
     ports:
       - "7878:7878"
     environment:
@@ -143,8 +173,11 @@ services:
   prowlarr:
     container_name: prowlarr
     image: ghcr.io/hotio/prowlarr
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 512M
     ports:
       - "9696:9696"
     environment:
@@ -160,8 +193,11 @@ services:
   sonarr:
     container_name: sonarr
     image: ghcr.io/hotio/sonarr
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
     ports:
       - "8989:8989"
     environment:
@@ -183,8 +219,11 @@ services:
   bazarr:
     container_name: bazarr
     image: ghcr.io/linuxserver/bazarr
-    cpu_shares: 256
-    mem_limit: 256m
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
     ports:
       - 6767:6767
     environment:
@@ -202,8 +241,11 @@ services:
   ersatztv:
     image: jasongdove/ersatztv:latest
     container_name: ersatztv
-    cpu_shares: 2048
-    mem_limit: 2048m
+    deploy:
+      resources:
+        limits:
+          cpus: 2
+          memory: 4G
     restart: unless-stopped
     environment:
       - TZ=America/Chicago
