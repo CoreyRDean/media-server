@@ -74,16 +74,15 @@ Just replace the UUIDs with your own. You can find the UUIDs of your volumes by 
 To backup the config files, you can run the following command:
 
 ```bash
-sudo rsync -av --delete /var/lib/transmission-daemon/.config/transmission-daemon /mnt/vault1/Config/transmission-daemon
-sudo rsync -av --delete /var/lib/plexmediaserver /mnt/vault1/Config/plexmediaserver
-sudo rsync -av --delete /var/lib/jellyfin/config /mnt/vault1/Config/jellyfin
-sudo rsync -av --delete /var/lib/jellyfin/cache /mnt/vault1/Config/jellyfin
-sudo rsync -av --delete /var/lib/jellyseerr/config /mnt/vault1/Config/jellyseerr
-sudo rsync -av --delete /var/lib/radarr/config /mnt/vault1/Config/radarr
-sudo rsync -av --delete /var/lib/prowlarr/config /mnt/vault1/Config/prowlarr
-sudo rsync -av --delete /var/lib/sonarr/config /mnt/vault1/Config/sonarr
-sudo rsync -av --delete /var/lib/bazarr/config /mnt/vault1/Config/bazarr
-sudo rsync -av --delete /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
+sudo rsync -av --delete /var/lib/transmission-daemon/.config/transmission-daemon/ /mnt/vault1/Config/transmission-daemon/
+sudo rsync -av --delete /var/lib/plexmediaserver/ /mnt/vault1/Config/plexmediaserver/
+sudo rsync -av --delete /var/lib/jellyfin/ /mnt/vault1/Config/jellyfin/
+sudo rsync -av --delete /var/lib/jellyseerr/ /mnt/vault1/Config/jellyseerr/
+sudo rsync -av --delete /var/lib/radarr/ /mnt/vault1/Config/radarr/
+sudo rsync -av --delete /var/lib/prowlarr/ /mnt/vault1/Config/prowlarr/
+sudo rsync -av --delete /var/lib/sonarr/ /mnt/vault1/Config/sonarr/
+sudo rsync -av --delete /var/lib/bazarr/ /mnt/vault1/Config/bazarr/
+sudo rsync -av --delete /var/lib/ersatztv/ /mnt/vault1/Config/ersatztv/
 ```
 
 #### Config Restore
@@ -91,15 +90,15 @@ sudo rsync -av --delete /var/lib/ersatztv/config /mnt/vault1/Config/ersatztv
 To restore the config files, you can run the following command:
 
 ```bash
-sudo rsync -av /mnt/vault1/Config/transmission-daemon /var/lib/transmission-daemon/.config/transmission-daemon
-sudo rsync -av /mnt/vault1/Config/plexmediaserver /var/lib/plexmediaserver
-sudo rsync -av /mnt/vault1/Config/jellyfin /var/lib/jellyfin
-sudo rsync -av /mnt/vault1/Config/jellyseerr /var/lib/jellyseerr
-sudo rsync -av /mnt/vault1/Config/radarr /var/lib/radarr
-sudo rsync -av /mnt/vault1/Config/prowlarr /var/lib/prowlarr
-sudo rsync -av /mnt/vault1/Config/sonarr /var/lib/sonarr
-sudo rsync -av /mnt/vault1/Config/bazarr /var/lib/bazarr
-sudo rsync -av /mnt/vault1/Config/ersatztv /var/lib/ersatztv
+sudo rsync -av /mnt/vault1/Config/transmission-daemon/ /var/lib/transmission-daemon/.config/transmission-daemon/
+sudo rsync -av /mnt/vault1/Config/plexmediaserver/ /var/lib/plexmediaserver/
+sudo rsync -av /mnt/vault1/Config/jellyfin/ /var/lib/jellyfin/
+sudo rsync -av /mnt/vault1/Config/jellyseerr/ /var/lib/jellyseerr/
+sudo rsync -av /mnt/vault1/Config/radarr/ /var/lib/radarr/
+sudo rsync -av /mnt/vault1/Config/prowlarr/ /var/lib/prowlarr/
+sudo rsync -av /mnt/vault1/Config/sonarr/ /var/lib/sonarr/
+sudo rsync -av /mnt/vault1/Config/bazarr/ /var/lib/bazarr/
+sudo rsync -av /mnt/vault1/Config/ersatztv/ /var/lib/ersatztv/
 ```
 
 ### Cleanup Old Downloads
