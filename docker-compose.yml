@@ -44,6 +44,7 @@ services:
       - PUID=1000
       - PGID=1000
       - UMASK=002
+      - PLEX_PREFERENCE_1="TranscoderQuality=2"
     network_mode: host
     volumes:
       - /var/lib/plexmediaserver:/config
@@ -263,3 +264,27 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ersatztv.rule=Host(`live.${DOMAIN}`)"
       - "traefik.http.services.ersatztv.loadbalancer.server.port=8409"
+
+  maintainerr:
+    image: ghcr.io/jorenn92/maintainerr:latest
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    container_name: maintainerr
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    ports:
+      - "6246:6246"
+    volumes:
+      - /var/lib/maintainerr/config:/config
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.maintainerr.rule=Host(`maintain.${DOMAIN}`)"
+      - "traefik.http.services.maintainerr.loadbalancer.server.port=6246"
