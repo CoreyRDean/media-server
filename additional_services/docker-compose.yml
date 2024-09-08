@@ -1,0 +1,58 @@
+version: '3'
+
+services:
+  stash:
+    image: stashapp/stash:latest
+    deploy:
+      resources:
+        limits:
+          cpus: 1.0
+          memory: 2G
+    container_name: stash
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      - STASH_STASH=/downloads/
+      - STASH_GENERATED=/generated/
+      - STASH_METADATA=/metadata/
+      - STASH_CACHE=/cache/
+      - STASH_PORT=9999
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/lib/stash/config:/root/.stash
+      - /mnt/vault2/Private/downloads:/downloads
+      - /var/lib/stash/metadata:/metadata
+      - /var/lib/stash/cache:/cache
+      - /var/lib/stash/blobs:/blobs
+      - /var/lib/stash/generated:/generated
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stash.rule=Host(`stash.${DOMAIN}`)"
+      - "traefik.http.services.stash.loadbalancer.server.port=9999"
+    network_mode: bridge
+
+  whisparr:
+    image: cr.hotio.dev/hotio/whisparr:latest
+    container_name: whisparr
+    restart: unless-stopped
+    env_file: ../.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+      - UMASK=002
+    volumes:
+      - /var/lib/whisparr:/config
+      - /mnt/vault2/Private/data:/data
+      - /mnt/vault2/Private/downloads:/downloads
+    ports:
+      - 6969:6969
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whisparr.rule=Host(`whisparr.${DOMAIN}`)"
+      - "traefik.http.services.whisparr.loadbalancer.server.port=6969"
+    network_mode: bridge
