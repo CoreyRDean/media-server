@@ -437,3 +437,29 @@ services:
       - MAKE_BACKUP=N
     restart: unless-stopped
     network_mode: bridge
+
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    deploy:
+      resources:
+        limits:
+          cpus: 1.0
+          memory: 2G
+    ports:
+      - "13378:13378"
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    volumes:
+      - /var/lib/audiobookshelf/config:/config
+      - /var/lib/audiobookshelf/metadata:/metadata
+      - /mnt/vault2/Books:/audiobooks
+    restart: unless-stopped
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN}`)"
+      - "traefik.http.services.audiobookshelf.loadbalancer.server.port=13378"
