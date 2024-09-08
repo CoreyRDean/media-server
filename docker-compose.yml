@@ -415,3 +415,25 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.rule=Host(`books.${DOMAIN}`)"
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+
+  auto-m4b:
+    image: seanap/auto-m4b
+    container_name: auto-m4b
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    volumes:
+      - /var/lib/auto-m4b/config:/config
+      - /mnt/vault2/Downloaded/books:/temp/recentlyadded
+      - /mnt/vault2/Temp:/temp
+      - /mnt/vault2/Books:/temp/untagged
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - CPU_CORES=2
+      - SLEEPTIME=5m
+      - MAKE_BACKUP=N
+    restart: unless-stopped
+    network_mode: bridge
