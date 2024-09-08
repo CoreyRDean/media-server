@@ -330,7 +330,7 @@ services:
     volumes:
       - /var/lib/organizr/config:/config
     ports:
-      - "8888:8888"
+      - "8888:80"
     network_mode: bridge
     labels:
       - "traefik.enable=true"
