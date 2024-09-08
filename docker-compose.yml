@@ -447,7 +447,7 @@ services:
           cpus: 1.0
           memory: 2G
     ports:
-      - "13378:13378"
+      - "13378:80"
     environment:
       - TZ=America/Chicago
       - PUID=1000
