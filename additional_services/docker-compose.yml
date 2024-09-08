@@ -35,6 +35,8 @@ services:
       - "traefik.http.routers.stash.rule=Host(`stash.${DOMAIN}`)"
       - "traefik.http.services.stash.loadbalancer.server.port=9999"
     network_mode: bridge
+    group_add:
+      - "1001"
 
   whisparr:
     image: ghcr.io/hotio/whisparr
@@ -56,3 +58,5 @@ services:
       - "traefik.http.routers.whisparr.rule=Host(`whisparr.${DOMAIN}`)"
       - "traefik.http.services.whisparr.loadbalancer.server.port=6969"
     network_mode: bridge
+    group_add:
+      - "1001"
