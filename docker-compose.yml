@@ -360,3 +360,29 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.kitana.rule=Host(`kitana.${DOMAIN}`)"
       - "traefik.http.services.kitana.loadbalancer.server.port=31337"
+
+  kometa:
+    image: kometateam/kometa:latest
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    container_name: kometa
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/lib/kometa/config:/config
+      - /mnt/vault1:/mnt/vault1:ro
+      - /mnt/vault2:/mnt/vault2:ro
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
+      - "traefik.http.services.kometa.loadbalancer.server.port=3000"
