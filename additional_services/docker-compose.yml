@@ -37,7 +37,7 @@ services:
     network_mode: bridge
 
   whisparr:
-    image: hotio/whisparr:latest
+    image: ghcr.io/hotio/whisparr
     container_name: whisparr
     restart: unless-stopped
     environment:
@@ -47,8 +47,8 @@ services:
       - UMASK=002
     volumes:
       - /var/lib/whisparr:/config
-      - /mnt/vault2/Private/data:/data
-      - /mnt/vault2/Private/downloads:/downloads
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
     ports:
       - 6969:6969
     labels:
