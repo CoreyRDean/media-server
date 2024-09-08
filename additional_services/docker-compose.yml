@@ -10,7 +10,8 @@ services:
           memory: 2G
     container_name: stash
     restart: unless-stopped
-    env_file: ../.env
+    ports:
+      - 9999:9999
     environment:
       - STASH_STASH=/downloads/
       - STASH_GENERATED=/generated/
@@ -39,7 +40,6 @@ services:
     image: hotio/whisparr:latest
     container_name: whisparr
     restart: unless-stopped
-    env_file: ../.env
     environment:
       - PUID=1000
       - PGID=1000
