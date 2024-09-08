@@ -380,9 +380,9 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - /var/lib/kometa/config:/config:rw
-      - /mnt/vault1:/mnt/vault1:ro
-      - /mnt/vault2:/mnt/vault2:ro
+      - ./kometa_config:/config:rw
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
       - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
     network_mode: bridge
     labels:

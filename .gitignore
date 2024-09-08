@@ -1,1 +1,5 @@
 .env
+
+# Ignore everything in kometa_config except config.yml
+kometa_config/*
+!kometa_config/config.yml

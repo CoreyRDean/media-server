@@ -1,0 +1,163 @@
+plex:
+  url: http://192.168.1.10:32400
+  token: gEck6zFE81jJLdqTP-h1
+  timeout: 60
+  db_cache: 4096
+  clean_bundles: true
+  empty_trash: true
+  optimize: true
+
+tmdb:
+  apikey: a8bcc8a2e631c8bec07ec61b063bef10
+  language: en
+  region: US
+  cache_expiration: 60
+
+tautulli:
+  url: http://192.168.1.10:8181
+  apikey: 60ba5b8b798d458a8f9e57d3f013153d
+
+settings: 
+  run_order:
+  - operations
+  - metadata
+  - collections
+  - overlays
+  cache: true
+  cache_expiration: 60
+  asset_folders: true
+  asset_depth: 0
+  create_asset_folders: true
+  prioritize_assets: true
+  dimensional_asset_rename: true
+  download_url_assets: true
+  show_missing_season_assets: true
+  show_missing_episode_assets: true
+  show_asset_not_needed: true
+  sync_mode: sync
+  minimum_items: 2
+  delete_below_minimum: false
+  delete_not_scheduled: false
+  run_again_delay: 0
+  missing_only_released: false
+  only_filter_missing: false
+  show_unmanaged: false
+  show_unconfigured: false
+  show_filtered: false
+  show_options: false
+  show_missing: true
+  show_missing_assets: true
+  save_report: true
+  tvdb_language: eng
+  item_refresh_delay: 0
+  playlist_sync_to_users: all
+  playlist_report: true
+  overlay_artwork_filetype: png
+  overlay_artwork_quality: 75
+
+libraries:
+  Movies:                                           # Must match a library name in your Plex
+    report_path: config/missing/Movies_missing.yml
+    template_variables:
+      sep_style: purple                               # use the purple separators globally for this library
+      collection_mode: hide                         # hide the collections within the "library" tab in Plex.
+      placeholder_imdb_id: tt8579674                # 1917 (2019) placeholder id for the separators, avoids a plex bug.
+    collection_files:
+      - default: golden                                   # Golden Globes Awards
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: oscars                                   # The Oscars
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: emmy
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: basic                                    # Some basic chart collections
+      - default: tmdb                                     # TMDb Charts (Popular, Trending, etc.)
+      - default: studio                                   # DreamWorks Studios, Lucasfilm Ltd, etc.
+      - default: seasonal                                 # Christmas, Halloween, etc.
+        template_variables:                           # Disable any US-specific seasonal collections
+          schedule_independence: never
+          schedule_thanksgiving: never
+          schedule_memorial: never
+          schedule_labor: never
+      - default: streaming                                # Streaming on Disney+, Netflix, etc.
+        template_variables:
+          originals_only: true                      # Only create collections for Original Content (i.e. Netflix Originals)
+      - default: universe                                 # Marvel Cinematic Universe, Wizarding World, etc.
+      - default: genre
+
+    remove_overlays: false                          # Set to true if you want to remove overlays
+    reapply_overlays: false                         # Set to true if you want to force-reapply overlays to everything
+                                                    # THERE IS RARELY IF EVER A REASON TO DO THIS AS IT WILL EXTEND RUN TIMES ANS CAUSE IMAGE BLOAT
+                                                    # IF YOU THINK YOU WANT TO DO THIS YOU ARE ALMOST CERTAINLY MISTAKEN
+    #reset_overlays: tmdb                           # if you want to reset the poster to default poster from tmdb - can cause image bloat
+
+    overlay_files:
+      - default: ribbon                                   # Used for ribbon in bottom right
+      - default: streaming                                # Streaming on Disney+, Netflix, etc.
+    settings:
+      asset_directory:
+        - /mnt/vault1/Movies
+        - /mnt/vault1/Unsorted
+        - /mnt/vault2/Movies
+
+    operations:
+      split_duplicates: false
+      assets_for_all: false
+
+  TV Shows:                                         # Must match a library name in your Plex
+    report_path: config/missing/TV_missing.yml
+    template_variables:
+      sep_style: plum                               # use the plum separators globally for this library
+      collection_mode: hide                         # hide the collections within the "library" tab in Plex.
+      placeholder_imdb_id: tt1190634                # The Boys (2019) placeholder id for the separators, avoids a plex bug.
+    collection_files:
+      - default: golden                                   # Golden Globes Awards
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: oscars                                   # The Oscars
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: emmy
+        template_variables:                           # Show collections from latest-10 onwards.
+          data:
+            starting: latest-10
+            ending: latest
+      - default: basic                                    # Some basic chart collections
+      - default: tmdb                                     # TMDb Charts (Popular, Trending, etc.)
+      - default: network                                  # ABC, CBC, NBC, FOX, etc.
+      - default: streaming                                # Streaming on Disney+, Netflix, etc.
+        template_variables:
+          originals_only: true                      # Only create collections for Original Content (i.e. Netflix Originals)
+    remove_overlays: false                          # Set to true if you want to remove overlays
+    reapply_overlays: false                         # If you are doing a lot of testing and changes like me, keep this to true to always reapply overlays - can cause image bloat
+    #reset_overlays: tmdb                           # if you want to reset the poster to default poster from tmdb - can cause image bloat
+    overlay_files:
+      - default: episode_info                             # S##E## information in bottom right on episode
+        template_variables:
+          builder_level: episode
+      - default: ribbon                                   # Used for ribbon in bottom right on show
+      - default: status                                   # Airing, Returning, Ended, Canceled on show
+    settings:
+      asset_directory:
+        - /mnt/vault1/Shows
+        - /mnt/vault2/Shows
+
+    operations:
+      split_duplicates: false
+      assets_for_all: false
+playlist_files:
+  - default: playlist
+    template_variables:
+      libraries: Movies, TV Shows                       # Must match the names of your libraries in Plex.
