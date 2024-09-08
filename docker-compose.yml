@@ -288,3 +288,75 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.maintainerr.rule=Host(`maintain.${DOMAIN}`)"
       - "traefik.http.services.maintainerr.loadbalancer.server.port=6246"
+
+  tautulli:
+    image: ghcr.io/tautulli/tautulli
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    container_name: tautulli
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+    ports:
+      - "8181:8181"
+    volumes:
+      - /var/lib/tautulli/config:/config
+      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN}`)"
+      - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+
+  organizr:
+    image: organizr/organizr:latest
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    container_name: organizr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/organizr/config:/config
+    ports:
+      - "8888:8888"
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.organizr.rule=Host(`home.${DOMAIN}`)"
+      - "traefik.http.services.organizr.loadbalancer.server.port=80"
+
+  kitana:
+    image: pannal/kitana
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 256M
+    container_name: kitana
+    restart: unless-stopped
+    environment:
+      - TZ=America/Chicago
+      - PUID=1000
+      - PGID=1000
+    ports:
+      - "31337:31337"
+    volumes:
+      - /var/lib/plexmediaserver:/plex
+      - /var/lib/kitana/data:/app/data
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kitana.rule=Host(`kitana.${DOMAIN}`)"
+      - "traefik.http.services.kitana.loadbalancer.server.port=31337"
