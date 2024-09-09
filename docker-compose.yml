@@ -282,7 +282,7 @@ services:
     ports:
       - "6246:6246"
     volumes:
-      - /var/lib/maintainerr/config:/config
+      - /var/lib/maintainerr/config:/opt/data
     network_mode: bridge
     labels:
       - "traefik.enable=true"
