@@ -57,8 +57,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2.0
-          memory: 4G
+          cpus: 1.0
+          memory: 2G
     container_name: jellyfin
     restart: unless-stopped
     environment:
@@ -483,11 +483,13 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: 1.0
+          memory: 2G
     environment:
       - LOG_LEVEL=info
       - TZ=America/Chicago
+      - CAPTCHA_SOLVER=none
+      - BROWSER_TIMEOUT=40000
     ports:
       - "8191:8191"
     restart: unless-stopped
