@@ -390,33 +390,6 @@ services:
       - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
       - "traefik.http.services.kometa.loadbalancer.server.port=3000"
 
-  readarr:
-    container_name: readarr
-    image: ghcr.io/hotio/readarr:testing
-    deploy:
-      resources:
-        limits:
-          cpus: 0.5
-          memory: 1G
-    ports:
-      - "8787:8787"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
-    volumes:
-      - /var/lib/readarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
-      - ./scraper/certs/bookinfo-club.crt:/etc/ssl/certs/bookinfo-club.crt
-    restart: unless-stopped
-    network_mode: bridge
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.readarr.rule=Host(`books.${DOMAIN}`)"
-      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
-
   auto-m4b:
     image: seanap/auto-m4b
     container_name: auto-m4b
@@ -465,12 +438,47 @@ services:
       - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN}`)"
       - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
 
+  readarr:
+    container_name: readarr
+    image: ghcr.io/hotio/readarr:testing
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    ports:
+      - "8787:8787"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - UMASK=002
+      - TZ=America/Chicago
+    volumes:
+      - /var/lib/readarr/config:/config
+      - /mnt/vault1:/mnt/vault1
+      - /mnt/vault2:/mnt/vault2
+      - ./scraper/certs/bookinfo-club.crt:/etc/ssl/certs/bookinfo-club.crt
+    restart: unless-stopped
+    networks:
+      - default
+      - scraper_network
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.readarr.rule=Host(`books.${DOMAIN}`)"
+      - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+
   readarr-metadata-scraper:
     build: scraper
     container_name: readarr-metadata-scraper
     depends_on:
       - readarr
     networks:
-      default:
+      scraper_network:
         aliases:
           - api.bookinfo.club
+
+networks:
+  default:
+    driver: bridge
+  scraper_network:
+    driver: bridge
