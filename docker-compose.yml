@@ -477,6 +477,22 @@ services:
         aliases:
           - api.bookinfo.club
 
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    deploy:
+      resources:
+        limits:
+          cpus: 0.5
+          memory: 1G
+    environment:
+      - LOG_LEVEL=info
+      - TZ=America/Chicago
+    ports:
+      - "8191:8191"
+    restart: unless-stopped
+    network_mode: bridge
+
 networks:
   default:
     driver: bridge
