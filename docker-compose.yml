@@ -462,4 +462,4 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN}`)"
-      - "traefik.http.services.audiobookshelf.loadbalancer.server.port=13378"
+      - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
