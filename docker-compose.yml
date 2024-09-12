@@ -421,12 +421,6 @@ services:
       - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
       - "traefik.http.services.kometa.loadbalancer.server.port=3000"
     profiles: ["media", "all-plex", "all-jellyfin", "all"]
-    entrypoint: >
-      /bin/sh -c "
-      echo 'Printing Kometa environment variables:';
-      env | sort;
-      echo 'Starting Kometa...';
-      /docker-entrypoint.sh $$@"
 
   auto-m4b:
     image: seanap/auto-m4b
