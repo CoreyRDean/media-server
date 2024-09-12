@@ -28,7 +28,7 @@ services:
     network_mode: bridge
     group_add:
       - "1001"
-    profiles: ["core", "web", "plex", "jellyfin", "all-plex", "all-jellyfin", "all-media"]
+    profiles: ["core", "web", "plex", "jellyfin", "all-plex", "all-jellyfin", "all-media", "all"]
     environment:
       - TZ=${TZ:-America/Chicago}
 
@@ -54,7 +54,7 @@ services:
       - ${PLEX_TRANSCODE_DIR:-/var/lib/plexmediaserver/transcode}:/transcode
       - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
       - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
-    profiles: ["plex", "all-media", "all-plex"]
+    profiles: ["plex", "all-media", "all-plex", "all"]
 
   jellyfin:
     image: jellyfin/jellyfin
@@ -82,7 +82,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.rule=Host(`watch.${DOMAIN}`)"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
-    profiles: ["jellyfin", "all-media", "all-jellyfin"]
+    profiles: ["jellyfin", "all-media", "all-jellyfin", "all"]
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
@@ -109,7 +109,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyseerr.rule=Host(`find.${DOMAIN}`)"
       - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
-    profiles: ["core", "media", "plex", "jellyfin", "all-media", "all-plex", "all-jellyfin"]
+    profiles: ["core", "media", "plex", "jellyfin", "all-media", "all-plex", "all-jellyfin", "all"]
 
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
@@ -150,7 +150,7 @@ services:
       - ${TRANSMISSION_INCOMPLETE_DIR:-/mnt/vault2/Incomplete}:/incomplete
       - ${TRANSMISSION_WATCH_DIR:-/var/lib/transmission-daemon/downloads}:/watch
     network_mode: bridge
-    profiles: ["core", "download", "all-plex", "all-jellyfin"]
+    profiles: ["core", "download", "all-plex", "all-jellyfin", "all"]
 
   radarr:
     container_name: radarr
@@ -177,7 +177,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
-    profiles: ["core", "media", "all-plex", "all-jellyfin"]
+    profiles: ["core", "media", "all-plex", "all-jellyfin", "all"]
 
   prowlarr:
     container_name: prowlarr
@@ -202,7 +202,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)"
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
-    profiles: ["core", "download", "all-plex", "all-jellyfin"]
+    profiles: ["core", "download", "all-plex", "all-jellyfin", "all"]
 
   sonarr:
     container_name: sonarr
@@ -229,7 +229,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(`shows.${DOMAIN}`)"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
-    profiles: ["core", "media", "all-plex", "all-jellyfin"]
+    profiles: ["core", "media", "all-plex", "all-jellyfin", "all"]
 
   bazarr:
     container_name: bazarr
@@ -256,7 +256,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)"
       - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-    profiles: ["core", "media", "all-plex", "all-jellyfin"]
+    profiles: ["core", "media", "all-plex", "all-jellyfin", "all"]
 
   ersatztv:
     image: jasongdove/ersatztv:latest
@@ -283,7 +283,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.ersatztv.rule=Host(`live.${DOMAIN}`)"
       - "traefik.http.services.ersatztv.loadbalancer.server.port=8409"
-    profiles: ["media", "all-plex", "all-jellyfin"]
+    profiles: ["media", "all-plex", "all-jellyfin", "all"]
 
   maintainerr:
     image: ghcr.io/jorenn92/maintainerr:latest
@@ -308,7 +308,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.maintainerr.rule=Host(`maintain.${DOMAIN}`)"
       - "traefik.http.services.maintainerr.loadbalancer.server.port=6246"
-    profiles: ["maintenance", "all-plex", "all-jellyfin"]
+    profiles: ["maintenance", "all-plex", "all-jellyfin", "all"]
 
   tautulli:
     image: ghcr.io/tautulli/tautulli
@@ -334,7 +334,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN}`)"
       - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
-    profiles: ["monitoring", "plex", "all-media", "all-plex"]
+    profiles: ["monitoring", "plex", "all-media", "all-plex", "all"]
 
   organizr:
     image: organizr/organizr:latest
@@ -358,7 +358,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.organizr.rule=Host(`home.${DOMAIN}`)"
       - "traefik.http.services.organizr.loadbalancer.server.port=80"
-    profiles: ["web", "all-plex", "all-jellyfin"]
+    profiles: ["web", "all-plex", "all-jellyfin", "all"]
 
   kitana:
     image: pannal/kitana
@@ -383,7 +383,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.kitana.rule=Host(`kitana.${DOMAIN}`)"
       - "traefik.http.services.kitana.loadbalancer.server.port=31337"
-    profiles: ["media", "all-plex", "all-jellyfin"]
+    profiles: ["media", "all-plex", "all-jellyfin", "all"]
 
   kometa:
     image: kometateam/kometa:latest
@@ -418,7 +418,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
       - "traefik.http.services.kometa.loadbalancer.server.port=3000"
-    profiles: ["media", "all-plex", "all-jellyfin"]
+    profiles: ["media", "all-plex", "all-jellyfin", "all"]
 
   auto-m4b:
     image: seanap/auto-m4b
@@ -441,7 +441,7 @@ services:
       - MAKE_BACKUP=${AUTO_M4B_MAKE_BACKUP:-N}
     restart: unless-stopped
     network_mode: bridge
-    profiles: ["books", "all-plex", "all-jellyfin"]
+    profiles: ["books", "all-plex", "all-jellyfin", "all"]
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
@@ -468,7 +468,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN}`)"
       - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
-    profiles: ["books", "all-plex", "all-jellyfin"]
+    profiles: ["books", "all-plex", "all-jellyfin", "all"]
 
   readarr:
     container_name: readarr
@@ -498,7 +498,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.rule=Host(`books.${DOMAIN}`)"
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
-    profiles: ["books", "all-plex", "all-jellyfin"]
+    profiles: ["books", "all-plex", "all-jellyfin", "all"]
 
   readarr-metadata-scraper:
     build: scraper
@@ -509,7 +509,7 @@ services:
       scraper_network:
         aliases:
           - api.bookinfo.club
-    profiles: ["books", "all-plex", "all-jellyfin"]
+    profiles: ["books", "all-plex", "all-jellyfin", "all"]
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -532,7 +532,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
       - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
-    profiles: ["core", "download", "all-plex", "all-jellyfin"]
+    profiles: ["core", "download", "all-plex", "all-jellyfin", "all"]
 
 networks:
   default:
