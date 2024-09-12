@@ -6,6 +6,7 @@ plex:
   clean_bundles: true
   empty_trash: true
   optimize: true
+  verify_ssl: false
 
 tmdb:
   apikey: ${TMDB_API_KEY}
@@ -16,6 +17,7 @@ tmdb:
 tautulli:
   url: ${TAUTULLI_URL}
   apikey: ${TAUTULLI_API_KEY}
+  verify_ssl: false
 
 settings: 
   run_order:
@@ -54,6 +56,7 @@ settings:
   playlist_report: true
   overlay_artwork_filetype: png
   overlay_artwork_quality: 75
+  verify_ssl: false
 
 libraries:
   Movies:                                           # Must match a library name in your Plex

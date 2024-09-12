@@ -401,6 +401,8 @@ services:
       - UMASK=${UMASK:-002}
       - KOMETA_CONFIG=/config/config.yml
       - KOMETA_RUN=true
+      - KOMETA_NO_VERIFY_SSL=true
+      - KOMETA_READ_ONLY_CONFIG=true
       - PLEX_URL=${PLEX_URL}
       - PLEX_TOKEN=${PLEX_TOKEN}
       - TMDB_API_KEY=${TMDB_API_KEY}
@@ -419,6 +421,12 @@ services:
       - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
       - "traefik.http.services.kometa.loadbalancer.server.port=3000"
     profiles: ["media", "all-plex", "all-jellyfin", "all"]
+    entrypoint: >
+      /bin/sh -c "
+      echo 'Printing Kometa environment variables:';
+      env | sort;
+      echo 'Starting Kometa...';
+      /docker-entrypoint.sh $$@"
 
   auto-m4b:
     image: seanap/auto-m4b
