@@ -412,6 +412,7 @@ services:
       - "${KOMETA_PORT:-3000}:3000"
     volumes:
       - ${KOMETA_CONFIG_DIR:-./kometa_config}:/config:rw
+      - ${KOMETA_CONFIG_DIR:-./kometa_config}/missing:/config/missing:rw
       - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
       - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
       - ${PLEX_LOGS_DIR:-/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs}:/plex_logs:ro
