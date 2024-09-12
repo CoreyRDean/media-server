@@ -1,6 +1,6 @@
 plex:
-  url: ${PLEX_URL}
-  token: ${PLEX_TOKEN}
+  url: <<PLEX_URL>>
+  token: <<PLEX_TOKEN>>
   timeout: 60
   db_cache: 4096
   clean_bundles: true
@@ -9,14 +9,14 @@ plex:
   verify_ssl: false
 
 tmdb:
-  apikey: ${TMDB_API_KEY}
+  apikey: <<TMDB_API_KEY>>
   language: en
   region: US
   cache_expiration: 60
 
 tautulli:
-  url: ${TAUTULLI_URL}
-  apikey: ${TAUTULLI_API_KEY}
+  url: <<TAUTULLI_URL>>
+  apikey: <<TAUTULLI_API_KEY>>
   verify_ssl: false
 
 settings: 
