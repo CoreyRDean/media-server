@@ -51,6 +51,7 @@ services:
     network_mode: host
     volumes:
       - ${PLEX_CONFIG_DIR:-/var/lib/plexmediaserver}:/config
+      - ${MEDIA_DIR_1:-/mnt/vault1}/Media:/config/Library/Application Support/Plex Media Server/Media
       - ${PLEX_TRANSCODE_DIR:-/var/lib/plexmediaserver/transcode}:/transcode
       - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
       - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
