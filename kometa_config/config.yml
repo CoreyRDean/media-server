@@ -1,6 +1,6 @@
 plex:
   url: <<s-plex-url>>
-  token: <<s-plex-tokenN>>
+  token: <<s-plex-token>>
   timeout: 60
   db_cache: 4096
   clean_bundles: true
