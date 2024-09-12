@@ -127,8 +127,8 @@ services:
     restart: unless-stopped
     ports:
       - "${TRANSMISSION_VPN_PORT:-9091}:9091"
-      - "${TRANSMISSION_VPN_PORT:-51413}:51413"
-      - "${TRANSMISSION_VPN_PORT:-51413}:51413/udp"
+      - "${TRANSMISSION_VPN_PORT_2:-51413}:51413"
+      - "${TRANSMISSION_VPN_PORT_2:-51413}:51413/udp"
     environment:
       - OPENVPN_PROVIDER=${OPENVPN_PROVIDER}
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
@@ -399,7 +399,7 @@ services:
       - PUID=${PUID:-1000}
       - PGID=${PGID:-1000}
       - UMASK=${UMASK:-002}
-      - KOMETA_CONFIG=${KOMETA_CONFIG_DIR:-/config/config.yml}
+      - KOMETA_CONFIG=/config/config.yml
       - KOMETA_RUN=true
       - PLEX_URL=${PLEX_URL}
       - PLEX_TOKEN=${PLEX_TOKEN}
