@@ -19,23 +19,67 @@ You may need to create these folders and ensure the correct permissions are set.
 
 ## Environment Variables
 
-The following environment variables are used to configure the various services:
+The following environment variables are used to configure the various services. These should be set in your `.env` file:
 
-- `PLEX_CLAIM`: The claim for the Plex server
+### General Configuration
+- `DOMAIN`: The domain name for the server
+- `TZ`: The timezone for the containers (default: America/Chicago)
+- `PUID`: The user ID for the user running the containers (default: 1000)
+- `PGID`: The group ID for the group running the containers (default: 1000)
+- `UMASK`: The umask for the user running the containers (default: 002)
+
+### OpenVPN Configuration
 - `OPENVPN_PROVIDER`: The name of the VPN provider
 - `OPENVPN_USERNAME`: The username for the VPN
 - `OPENVPN_PASSWORD`: The password for the VPN
 - `OPENVPN_CONFIG`: The configuration for the VPN
+
+### Transmission Configuration
 - `TRANSMISSION_RPC_USERNAME`: The username for the Transmission RPC
 - `TRANSMISSION_RPC_PASSWORD`: The password for the Transmission RPC
-- `TRANSMISSION_DOWNLOAD_DIR`: The directory for completed downloads
-- `TRANSMISSION_INCOMPLETE_DIR`: The directory for incomplete downloads
-- `TRANSMISSION_WATCH_DIR`: The directory for watch downloads
-- `PUID`: The user ID for the user running the containers
-- `PGID`: The group ID for the group running the containers
-- `UMASK`: The umask for the user running the containers
-- `TZ`: The timezone for the containers
-- `DOMAIN`: The domain name for the server
+- `TRANSMISSION_DOWNLOAD_DIR`: The directory for completed downloads (default: /mnt/vault2/Downloaded)
+- `TRANSMISSION_INCOMPLETE_DIR`: The directory for incomplete downloads (default: /incomplete)
+- `TRANSMISSION_WATCH_DIR`: The directory for watch downloads (default: /watch)
+
+### Plex Configuration
+- `PLEX_CLAIM`: The claim token for the Plex server
+
+### Resource Limits
+Each service has CPU and memory limit variables. For example:
+- `TRAEFIK_CPU_LIMIT`: CPU limit for Traefik (default: 0.25)
+- `TRAEFIK_MEMORY_LIMIT`: Memory limit for Traefik (default: 512M)
+
+Similar variables exist for all other services (Plex, Jellyfin, Radarr, Sonarr, etc.).
+
+### Service-specific Configuration
+Each service has its own port variable. For example:
+- `JELLYFIN_PORT`: The port for Jellyfin (default: 8096)
+- `RADARR_PORT`: The port for Radarr (default: 7878)
+
+Similar variables exist for all other services.
+
+### Directory Paths
+Each service has its own configuration directory variable. For example:
+- `PLEX_CONFIG_DIR`: The configuration directory for Plex (default: /var/lib/plexmediaserver)
+- `JELLYFIN_CONFIG_DIR`: The configuration directory for Jellyfin (default: /var/lib/jellyfin/config)
+
+Similar variables exist for all other services.
+
+### Media Directories
+- `MEDIA_DIR_1`: The first media directory (default: /mnt/vault1)
+- `MEDIA_DIR_2`: The second media directory (default: /mnt/vault2)
+- `PLEX_LOGS_DIR`: The directory for Plex logs
+- `AUTO_M4B_DOWNLOADED_DIR`: The directory for downloaded audiobooks
+- `AUTO_M4B_TEMP_DIR`: The temporary directory for Auto-M4B
+- `AUTO_M4B_UNTAGGED_DIR`: The directory for untagged audiobooks
+- `AUDIOBOOKSHELF_AUDIOBOOKS_DIR`: The directory for audiobooks in Audiobookshelf
+
+### Additional Configuration
+- `AUTO_M4B_CPU_CORES`: The number of CPU cores for Auto-M4B (default: 2)
+- `AUTO_M4B_SLEEPTIME`: The sleep time for Auto-M4B (default: 5m)
+- `AUTO_M4B_MAKE_BACKUP`: Whether to make backups in Auto-M4B (default: N)
+
+Please refer to the `.env.example` file for a complete list of all available environment variables and their default values.
 
 ## Starting the Services on Boot
 
@@ -122,3 +166,72 @@ crontab -e
 ```bash
 0 3 * * * /path/to/cleanup_old_downloads.sh
 ```
+
+## Docker Compose Profiles
+
+This project uses Docker Compose profiles to allow for flexible deployment of services. Here's how to use them:
+
+### Available Profiles
+
+- `core`: Essential services that should always run
+- `media`: Media management and streaming services
+- `download`: Download-related services
+- `web`: Web-based interfaces and proxies
+- `books`: Book-related services
+- `maintenance`: Maintenance services
+- `monitoring`: Monitoring services
+- `plex`: Plex-specific services
+- `jellyfin`: Jellyfin-specific services
+- `all-media`: Both Plex and Jellyfin services
+- `all-plex`: All services except Jellyfin
+- `all-jellyfin`: All services except Plex and Plex-specific services
+
+### Using Profiles
+
+To start services using specific profiles, use the `--profile` flag with `docker-compose up`. You can use multiple profiles in a single command. Here are some examples:
+
+1. Start core services only:
+
+   ```bash
+   docker-compose --profile core up -d
+   ```
+
+2. Start core and media services:
+
+   ```bash
+   docker-compose --profile core --profile media up -d
+   ```
+
+3. Start everything with Plex (no Jellyfin):
+
+   ```bash
+   docker-compose --profile all-plex up -d
+   ```
+
+4. Start everything with Jellyfin (no Plex):
+
+   ```bash
+   docker-compose --profile all-jellyfin up -d
+   ```
+
+5. Start core services with Plex:
+
+   ```bash
+   docker-compose --profile core --profile plex up -d
+   ```
+
+6. Start core services with Jellyfin:
+
+   ```bash
+   docker-compose --profile core --profile jellyfin up -d
+   ```
+
+7. Start all services (including both Plex and Jellyfin):
+
+   ```bash
+   docker-compose --profile all-media up -d
+   ```
+
+### Stopping Services
+
+To stop services, you can use the same profile flags with the `down` command.

@@ -5,8 +5,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.25
-          memory: 512M
+          cpus: ${TRAEFIK_CPU_LIMIT:-0.25}
+          memory: ${TRAEFIK_MEMORY_LIMIT:-512M}
     container_name: traefik
     command:
       - "--api.insecure=true"
@@ -28,90 +28,96 @@ services:
     network_mode: bridge
     group_add:
       - "1001"
+    profiles: ["core", "web", "plex", "jellyfin", "all-plex", "all-jellyfin", "all-media"]
+    environment:
+      - TZ=${TZ:-America/Chicago}
 
   plex:
     image: plexinc/pms-docker
     deploy:
       resources:
         limits:
-          cpus: 4.0
-          memory: 8G
+          cpus: ${PLEX_CPU_LIMIT:-4.0}
+          memory: ${PLEX_MEMORY_LIMIT:-8G}
     container_name: plex
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
+      - TZ=${TZ:-America/Chicago}
       - PLEX_CLAIM=${PLEX_CLAIM}
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
       - PLEX_PREFERENCE_1="TranscoderQuality=2"
     network_mode: host
     volumes:
-      - /var/lib/plexmediaserver:/config
-      - /tmp:/transcode
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
+      - ${PLEX_CONFIG_DIR:-/var/lib/plexmediaserver}:/config
+      - ${PLEX_TRANSCODE_DIR:-/var/lib/plexmediaserver/transcode}:/transcode
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
+    profiles: ["plex", "all-media", "all-plex"]
 
   jellyfin:
     image: jellyfin/jellyfin
     deploy:
       resources:
         limits:
-          cpus: 1.0
-          memory: 2G
+          cpus: ${JELLYFIN_CPU_LIMIT:-1.0}
+          memory: ${JELLYFIN_MEMORY_LIMIT:-2G}
     container_name: jellyfin
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     ports:
-      - 8096:8096
+      - ${JELLYFIN_PORT:-8096}:8096
     network_mode: bridge
     volumes:
-      - /var/lib/jellyfin/config:/config
-      - /var/lib/jellyfin/cache:/cache
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
+      - ${JELLYFIN_CONFIG_DIR:-/var/lib/jellyfin/config}:/config
+      - ${JELLYFIN_CACHE_DIR:-/var/lib/jellyfin/cache}:/cache
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.rule=Host(`watch.${DOMAIN}`)"
       - "traefik.http.services.jellyfin.loadbalancer.server.port=8096"
+    profiles: ["jellyfin", "all-media", "all-jellyfin"]
 
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${JELLYSEERR_CPU_LIMIT:-0.5}
+          memory: ${JELLYSEERR_MEMORY_LIMIT:-1G}
     container_name: jellyseerr
     environment:
       - LOG_LEVEL=debug
-      - TZ=America/Chicago
-      - PORT=5055
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PORT=${JELLYSEERR_PORT:-5055}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     ports:
-      - 5055:5055
+      - ${JELLYSEERR_PORT:-5055}:5055
     volumes:
-      - /var/lib/jellyseerr/config:/app/config
+      - ${JELLYSEERR_CONFIG_DIR:-/var/lib/jellyseerr/config}:/app/config
     restart: unless-stopped
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyseerr.rule=Host(`find.${DOMAIN}`)"
       - "traefik.http.services.jellyseerr.loadbalancer.server.port=5055"
+    profiles: ["core", "media", "plex", "jellyfin", "all-media", "all-plex", "all-jellyfin"]
 
   transmission-vpn:
     image: haugene/transmission-openvpn:latest
     deploy:
       resources:
         limits:
-          cpus: 1.0
-          memory: 2G
+          cpus: ${TRANSMISSION_VPN_CPU_LIMIT:-1.0}
+          memory: ${TRANSMISSION_VPN_MEMORY_LIMIT:-2G}
     container_name: transmission-vpn
     env_file: .env
     cap_add:
@@ -120,9 +126,9 @@ services:
       - /dev/net/tun
     restart: unless-stopped
     ports:
-      - "9091:9091"
-      - "51413:51413"
-      - "51413:51413/udp"
+      - "${TRANSMISSION_VPN_PORT:-9091}:9091"
+      - "${TRANSMISSION_VPN_PORT:-51413}:51413"
+      - "${TRANSMISSION_VPN_PORT:-51413}:51413/udp"
     environment:
       - OPENVPN_PROVIDER=${OPENVPN_PROVIDER}
       - OPENVPN_USERNAME=${OPENVPN_USERNAME}
@@ -131,19 +137,20 @@ services:
       - LOCAL_NETWORK=192.168.0.0/16,172.16.0.0/12
       - TRANSMISSION_RPC_USERNAME=${TRANSMISSION_RPC_USERNAME}
       - TRANSMISSION_RPC_PASSWORD=${TRANSMISSION_RPC_PASSWORD}
-      - TRANSMISSION_DOWNLOAD_DIR=/mnt/vault2/Downloaded
-      - TRANSMISSION_INCOMPLETE_DIR=/incomplete
-      - TRANSMISSION_WATCH_DIR=/watch
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - TRANSMISSION_DOWNLOAD_DIR=${TRANSMISSION_DOWNLOAD_DIR:-/mnt/vault2/Downloaded}
+      - TRANSMISSION_INCOMPLETE_DIR=${TRANSMISSION_INCOMPLETE_DIR:-/incomplete}
+      - TRANSMISSION_WATCH_DIR=${TRANSMISSION_WATCH_DIR:-/watch}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/transmission-daemon/.config/transmission-daemon:/config
-      - /mnt/vault2/Downloaded:/mnt/vault2/Downloaded
-      - /mnt/vault2/Incomplete:/incomplete
-      - /var/lib/transmission-daemon/downloads:/watch
+      - ${TRANSMISSION_CONFIG_DIR:-/var/lib/transmission-daemon/.config/transmission-daemon}:/config
+      - ${TRANSMISSION_DOWNLOAD_DIR:-/mnt/vault2/Downloaded}:/mnt/vault2/Downloaded
+      - ${TRANSMISSION_INCOMPLETE_DIR:-/mnt/vault2/Incomplete}:/incomplete
+      - ${TRANSMISSION_WATCH_DIR:-/var/lib/transmission-daemon/downloads}:/watch
     network_mode: bridge
+    profiles: ["core", "download", "all-plex", "all-jellyfin"]
 
   radarr:
     container_name: radarr
@@ -151,25 +158,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${RADARR_CPU_LIMIT:-0.5}
+          memory: ${RADARR_MEMORY_LIMIT:-1G}
     ports:
-      - "7878:7878"
+      - "${RADARR_PORT:-7878}:7878"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/radarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
+      - ${RADARR_CONFIG_DIR:-/var/lib/radarr/config}:/config
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
     restart: unless-stopped
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.radarr.rule=Host(`movies.${DOMAIN}`)"
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+    profiles: ["core", "media", "all-plex", "all-jellyfin"]
 
   prowlarr:
     container_name: prowlarr
@@ -177,19 +185,24 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.25
-          memory: 512M
+          cpus: ${PROWLARR_CPU_LIMIT:-0.25}
+          memory: ${PROWLARR_MEMORY_LIMIT:-512M}
     ports:
-      - "9696:9696"
+      - "${PROWLARR_PORT:-9696}:9696"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/prowlarr/config:/config
+      - ${PROWLARR_CONFIG_DIR:-/var/lib/prowlarr/config}:/config
     restart: unless-stopped
-    network_mode: host
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)"
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+    profiles: ["core", "download", "all-plex", "all-jellyfin"]
 
   sonarr:
     container_name: sonarr
@@ -197,25 +210,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${SONARR_CPU_LIMIT:-0.5}
+          memory: ${SONARR_MEMORY_LIMIT:-1G}
     ports:
-      - "8989:8989"
+      - "${SONARR_PORT:-8989}:8989"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/sonarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
+      - ${SONARR_CONFIG_DIR:-/var/lib/sonarr/config}:/config
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
     restart: unless-stopped
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.sonarr.rule=Host(`shows.${DOMAIN}`)"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+    profiles: ["core", "media", "all-plex", "all-jellyfin"]
 
   bazarr:
     container_name: bazarr
@@ -223,21 +237,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${BAZARR_CPU_LIMIT:-0.5}
+          memory: ${BAZARR_MEMORY_LIMIT:-1G}
     ports:
-      - 6767:6767
+      - ${BAZARR_PORT:-6767}:6767
     environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/bazarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
+      - ${BAZARR_CONFIG_DIR:-/var/lib/bazarr/config}:/config
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
     restart: unless-stopped
-    network_mode: host
+    network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.${DOMAIN}`)"
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+    profiles: ["core", "media", "all-plex", "all-jellyfin"]
 
   ersatztv:
     image: jasongdove/ersatztv:latest
@@ -245,150 +264,161 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 2.0
-          memory: 4G
+          cpus: ${ERSATZTV_CPU_LIMIT:-2.0}
+          memory: ${ERSATZTV_MEMORY_LIMIT:-4G}
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     ports:
-      - 8409:8409
+      - ${ERSATZTV_PORT:-8409}:8409
     volumes:
-      - /var/lib/ersatztv/config:/root/.local/share/ersatztv
-      - /mnt/vault1:/mnt/vault1:ro
-      - /mnt/vault2:/mnt/vault2:ro
+      - ${ERSATZTV_CONFIG_DIR:-/var/lib/ersatztv/config}:/root/.local/share/ersatztv
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1:ro
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2:ro
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ersatztv.rule=Host(`live.${DOMAIN}`)"
       - "traefik.http.services.ersatztv.loadbalancer.server.port=8409"
+    profiles: ["media", "all-plex", "all-jellyfin"]
 
   maintainerr:
     image: ghcr.io/jorenn92/maintainerr:latest
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${MAINTAINERR_CPU_LIMIT:-0.5}
+          memory: ${MAINTAINERR_MEMORY_LIMIT:-1G}
     container_name: maintainerr
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     ports:
-      - "6246:6246"
+      - "${MAINTAINERR_PORT:-6246}:6246"
     volumes:
-      - /var/lib/maintainerr/config:/opt/data
+      - ${MAINTAINERR_CONFIG_DIR:-/var/lib/maintainerr/config}:/opt/data
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.maintainerr.rule=Host(`maintain.${DOMAIN}`)"
       - "traefik.http.services.maintainerr.loadbalancer.server.port=6246"
+    profiles: ["maintenance", "all-plex", "all-jellyfin"]
 
   tautulli:
     image: ghcr.io/tautulli/tautulli
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${TAUTULLI_CPU_LIMIT:-0.5}
+          memory: ${TAUTULLI_MEMORY_LIMIT:-1G}
     container_name: tautulli
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     ports:
-      - "8181:8181"
+      - "${TAUTULLI_PORT:-8181}:8181"
     volumes:
-      - /var/lib/tautulli/config:/config
-      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+      - ${TAUTULLI_CONFIG_DIR:-/var/lib/tautulli/config}:/config
+      - ${PLEX_LOGS_DIR:-/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs}:/plex_logs:ro
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.${DOMAIN}`)"
       - "traefik.http.services.tautulli.loadbalancer.server.port=8181"
+    profiles: ["monitoring", "plex", "all-media", "all-plex"]
 
   organizr:
     image: organizr/organizr:latest
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${ORGANIZR_CPU_LIMIT:-0.5}
+          memory: ${ORGANIZR_MEMORY_LIMIT:-1G}
     container_name: organizr
     restart: unless-stopped
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/organizr/config:/config
+      - ${ORGANIZR_CONFIG_DIR:-/var/lib/organizr/config}:/config
     ports:
-      - "8888:80"
+      - "${ORGANIZR_PORT:-8888}:80"
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.organizr.rule=Host(`home.${DOMAIN}`)"
       - "traefik.http.services.organizr.loadbalancer.server.port=80"
+    profiles: ["web", "all-plex", "all-jellyfin"]
 
   kitana:
     image: pannal/kitana
     deploy:
       resources:
         limits:
-          cpus: 0.25
-          memory: 256M
+          cpus: ${KITANA_CPU_LIMIT:-0.25}
+          memory: ${KITANA_MEMORY_LIMIT:-256M}
     container_name: kitana
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
     ports:
-      - "31337:31337"
+      - "${KITANA_PORT:-31337}:31337"
     volumes:
-      - /var/lib/plexmediaserver:/plex
-      - /var/lib/kitana/data:/app/data
+      - ${PLEX_CONFIG_DIR:-/var/lib/plexmediaserver}:/plex
+      - ${KITANA_DATA_DIR:-/var/lib/kitana/data}:/app/data
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.kitana.rule=Host(`kitana.${DOMAIN}`)"
       - "traefik.http.services.kitana.loadbalancer.server.port=31337"
+    profiles: ["media", "all-plex", "all-jellyfin"]
 
   kometa:
     image: kometateam/kometa:latest
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${KOMETA_CPU_LIMIT:-0.5}
+          memory: ${KOMETA_MEMORY_LIMIT:-1G}
     container_name: kometa
     restart: unless-stopped
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - KOMETA_CONFIG=/config/config.yml
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - KOMETA_CONFIG=${KOMETA_CONFIG_DIR:-/config/config.yml}
       - KOMETA_RUN=true
+      - PLEX_URL=${PLEX_URL}
+      - PLEX_TOKEN=${PLEX_TOKEN}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - TAUTULLI_URL=${TAUTULLI_URL}
+      - TAUTULLI_API_KEY=${TAUTULLI_API_KEY}
     ports:
-      - "3000:3000"
+      - "${KOMETA_PORT:-3000}:3000"
     volumes:
-      - ./kometa_config:/config:rw
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
-      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs:/plex_logs:ro
+      - ${KOMETA_CONFIG_DIR:-./kometa_config}:/config:rw
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
+      - ${PLEX_LOGS_DIR:-/var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Logs}:/plex_logs:ro
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.kometa.rule=Host(`kometa.${DOMAIN}`)"
       - "traefik.http.services.kometa.loadbalancer.server.port=3000"
+    profiles: ["media", "all-plex", "all-jellyfin"]
 
   auto-m4b:
     image: seanap/auto-m4b
@@ -396,21 +426,22 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${AUTO_M4B_CPU_LIMIT:-0.5}
+          memory: ${AUTO_M4B_MEMORY_LIMIT:-1G}
     volumes:
-      - /var/lib/auto-m4b/config:/config
-      - /mnt/vault2/Downloaded/books:/temp/recentlyadded
-      - /mnt/vault2/Temp:/temp
-      - /mnt/vault2/Books:/temp/untagged
+      - ${AUTO_M4B_CONFIG_DIR:-/var/lib/auto-m4b/config}:/config
+      - ${AUTO_M4B_DOWNLOADED_DIR:-/mnt/vault2/Downloaded/books}:/temp/recentlyadded
+      - ${AUTO_M4B_TEMP_DIR:-/mnt/vault2/Temp}:/temp
+      - ${AUTO_M4B_UNTAGGED_DIR:-/mnt/vault2/Books}:/temp/untagged
     environment:
-      - PUID=1000
-      - PGID=1000
-      - CPU_CORES=2
-      - SLEEPTIME=5m
-      - MAKE_BACKUP=N
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - CPU_CORES=${AUTO_M4B_CPU_CORES:-2}
+      - SLEEPTIME=${AUTO_M4B_SLEEPTIME:-5m}
+      - MAKE_BACKUP=${AUTO_M4B_MAKE_BACKUP:-N}
     restart: unless-stopped
     network_mode: bridge
+    profiles: ["books", "all-plex", "all-jellyfin"]
 
   audiobookshelf:
     image: ghcr.io/advplyr/audiobookshelf:latest
@@ -418,25 +449,26 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 1.0
-          memory: 2G
+          cpus: ${AUDIOBOOKSHELF_CPU_LIMIT:-1.0}
+          memory: ${AUDIOBOOKSHELF_MEMORY_LIMIT:-2G}
     ports:
-      - "13378:80"
+      - "${AUDIOBOOKSHELF_PORT:-13378}:80"
     environment:
-      - TZ=America/Chicago
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
+      - TZ=${TZ:-America/Chicago}
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
     volumes:
-      - /var/lib/audiobookshelf/config:/config
-      - /var/lib/audiobookshelf/metadata:/metadata
-      - /mnt/vault2/Books:/audiobooks
+      - ${AUDIOBOOKSHELF_CONFIG_DIR:-/var/lib/audiobookshelf/config}:/config
+      - ${AUDIOBOOKSHELF_METADATA_DIR:-/var/lib/audiobookshelf/metadata}:/metadata
+      - ${AUDIOBOOKSHELF_AUDIOBOOKS_DIR:-/mnt/vault2/Books}:/audiobooks
     restart: unless-stopped
     network_mode: bridge
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.${DOMAIN}`)"
       - "traefik.http.services.audiobookshelf.loadbalancer.server.port=80"
+    profiles: ["books", "all-plex", "all-jellyfin"]
 
   readarr:
     container_name: readarr
@@ -444,20 +476,20 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 0.5
-          memory: 1G
+          cpus: ${READARR_CPU_LIMIT:-0.5}
+          memory: ${READARR_MEMORY_LIMIT:-1G}
     ports:
-      - "8787:8787"
+      - "${READARR_PORT:-8787}:8787"
     environment:
-      - PUID=1000
-      - PGID=1000
-      - UMASK=002
-      - TZ=America/Chicago
+      - PUID=${PUID:-1000}
+      - PGID=${PGID:-1000}
+      - UMASK=${UMASK:-002}
+      - TZ=${TZ:-America/Chicago}
     volumes:
-      - /var/lib/readarr/config:/config
-      - /mnt/vault1:/mnt/vault1
-      - /mnt/vault2:/mnt/vault2
-      - ./scraper/certs/bookinfo-club.crt:/etc/ssl/certs/bookinfo-club.crt
+      - ${READARR_CONFIG_DIR:-/var/lib/readarr/config}:/config
+      - ${MEDIA_DIR_1:-/mnt/vault1}:/mnt/vault1
+      - ${MEDIA_DIR_2:-/mnt/vault2}:/mnt/vault2
+      - ${READARR_CERT_DIR:-./scraper/certs/bookinfo-club.crt}:/etc/ssl/certs/bookinfo-club.crt
     restart: unless-stopped
     networks:
       - default
@@ -466,6 +498,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.readarr.rule=Host(`books.${DOMAIN}`)"
       - "traefik.http.services.readarr.loadbalancer.server.port=8787"
+    profiles: ["books", "all-plex", "all-jellyfin"]
 
   readarr-metadata-scraper:
     build: scraper
@@ -476,6 +509,7 @@ services:
       scraper_network:
         aliases:
           - api.bookinfo.club
+    profiles: ["books", "all-plex", "all-jellyfin"]
 
   flaresolverr:
     image: ghcr.io/flaresolverr/flaresolverr:latest
@@ -483,17 +517,22 @@ services:
     deploy:
       resources:
         limits:
-          cpus: 1.0
-          memory: 2G
+          cpus: ${FLARESOLVERR_CPU_LIMIT:-1.0}
+          memory: ${FLARESOLVERR_MEMORY_LIMIT:-2G}
     environment:
       - LOG_LEVEL=info
-      - TZ=America/Chicago
+      - TZ=${TZ:-America/Chicago}
       - CAPTCHA_SOLVER=none
       - BROWSER_TIMEOUT=40000
     ports:
-      - "8191:8191"
+      - "${FLARESOLVERR_PORT:-8191}:8191"
     restart: unless-stopped
     network_mode: bridge
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flaresolverr.rule=Host(`flaresolverr.${DOMAIN}`)"
+      - "traefik.http.services.flaresolverr.loadbalancer.server.port=8191"
+    profiles: ["core", "download", "all-plex", "all-jellyfin"]
 
 networks:
   default:

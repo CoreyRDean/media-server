@@ -1,6 +1,6 @@
 plex:
-  url: http://192.168.1.10:32400
-  token: gEck6zFE81jJLdqTP-h1
+  url: ${PLEX_URL}
+  token: ${PLEX_TOKEN}
   timeout: 60
   db_cache: 4096
   clean_bundles: true
@@ -8,14 +8,14 @@ plex:
   optimize: true
 
 tmdb:
-  apikey: a8bcc8a2e631c8bec07ec61b063bef10
+  apikey: ${TMDB_API_KEY}
   language: en
   region: US
   cache_expiration: 60
 
 tautulli:
-  url: http://192.168.1.10:8181
-  apikey: 60ba5b8b798d458a8f9e57d3f013153d
+  url: ${TAUTULLI_URL}
+  apikey: ${TAUTULLI_API_KEY}
 
 settings: 
   run_order:
