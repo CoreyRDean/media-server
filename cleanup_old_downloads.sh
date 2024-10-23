@@ -13,7 +13,7 @@ find "$MOVIE_DIR" -type f -mtime +$DAYS -delete
 find "$TV_DIR" -type f -mtime +$DAYS -delete
 find "$PHOTO_CACHE_DIR" -name "*.jpg" -type f -mtime +$DAYS -delete
 
-# Optionally, to delete empty directories as well:
-find "$MOVIE_DIR" -type d -empty -delete
-find "$TV_DIR" -type d -empty -delete
-find "$PHOTO_CACHE_DIR" -type d -empty -delete
+# Delete empty subdirectories, but not the main directories
+find "$MOVIE_DIR" -mindepth 1 -type d -empty -delete
+find "$TV_DIR" -mindepth 1 -type d -empty -delete
+find "$PHOTO_CACHE_DIR" -mindepth 1 -type d -empty -delete
