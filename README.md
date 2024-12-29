@@ -111,6 +111,22 @@ UUID=2151fd36-4286-30e1-be8f-cf128abe7f4d /mnt/vault1 hfsplus force,rw 0 1
 
 Just replace the UUIDs with your own. You can find the UUIDs of your volumes by running `lsblk`.
 
+#### Troubleshooting
+Sometimes these drives can get unmounted uncleanly and may need to be fixed.
+
+1. mount | grep /mnt/vault1
+	1. Check it is mounted as read-only, if so it needs to be fixed
+2. sudo umount /mnt/vault1
+3. sudo fsck /dev/sda2
+	1. If these are hfs+ disk run as `fsck.hfsplus`
+		1. You many need to run `sudo apt install hfsprogs`
+	1. Replace with the disk name from step 1
+4. Try to remount
+	1. sudo mount -t hfsplus -o force,rw /dev/sda2 /mnt/vault1
+5. Check any other drives
+6. Reboot
+
+
 ### Config Backup
 
 (Note: There is a bash alias available for this by running `git clone https://gist.github.com/a10b4659279eb5eb72c5eeb71a111fbb.git ~/a10b4659279eb5eb72c5eeb71a111fbb && cp ~/a10b4659279eb5eb72c5eeb71a111fbb/.bash_aliases ~/.bash_aliases && source ~/.bash_aliases)
