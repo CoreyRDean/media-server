@@ -8,8 +8,8 @@ Wants=mnt-vault1.mount mnt-vault2.mount
 Type=oneshot
 RemainAfterExit=yes
 ExecStartPre=/bin/sleep 10
-ExecStart=/usr/bin/docker-compose -f /media-server/docker-compose.yml up -d
-ExecStop=/usr/bin/docker-compose -f /media-server/docker-compose.yml down
+ExecStart=/usr/bin/docker compose -f /home/ryan/media-server/docker-compose.yml --profile all-video up -d
+ExecStop=/usr/bin/docker compose -f /home/ryan/media-server/docker-compose.yml down
 
 [Install]
 WantedBy=multi-user.target
